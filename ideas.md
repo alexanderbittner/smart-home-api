@@ -69,3 +69,15 @@ This is a list of capabilities ideally included in the smart home API and device
   - Examples: Temperature sensor sends data to statistics server every minute, Door opens -> sensor sends event to logging server
 - Routines: specific triggers (e.g. time, device connecting to wifi, temperature threshold) lead to actions (turn on lights, push notification, increase fan speed, ...)
   - more complex programs could be possible, e.g. Turn on lights at 6:30, turn on alarm sound until button is pressed
+
+## Security concerns
+
+One of the largest issues of the Internet of Things is the high percentage of vulnerable or poorly secured devices accessing the internet.
+Therefore, some security measures should be implemented:
+
+- All smart home devices should be located in a network that is only connected to the internet periodically in case updates are needed
+  - This network should be internally separated from all other networks, at least by using different VLANs.
+  - The control server has interfaces in the smart home and regular network.
+- The control server should collect logs from all devices and forward them to a different server for analysis and anomaly detection
+- All external requests to the control server should use HTTPS and OAuth 2.0
+- The control server is open to the Internet and should therefore be isolated from the regular network where possible
