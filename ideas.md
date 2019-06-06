@@ -18,35 +18,16 @@ Every device should have a state. State ideas:
 
 ### Endpoint stuff
 
-API endpoint collection:
-
-- /register
-  - registers a new device
-- /remove
-  - deletes device
-- /get
-  - value to get in parameter
-  - returns value
-- /set
-  - value in parameter
-  - sets value provided to endpoint
+This part has been moved to endpoints[.]md, please look at this file for more information
 
 ### Device types
 
-Device types to be used are listed here. One physical device can contain multiple devices! Example: Light Sensor, Temperature Sensor and Fan controlled by one Raspberry Pi. For more information, see the Architecture.
+This part has been moved to endpoints[.]md, please look at this file for more information.
+However, future ideas that might be added later can be found below:
 
-- Lamp
-- Temperature Sensor
-- Light Sensor
-- Movement sensor
+Device types to be used are listed here. One physical device can contain multiple devices! Example: Light Sensor, Temperature Sensor and Fan controlled by one Raspberry Pi. For more information, see the Architecture. Different device types might perform similar actions, e.g. an Actuator could be assigned a specific value just like a lightbulb. Distinction between types is still important for grouping and distinction through (for example) symbols in a mobile app.
+
 - Camera
-- Sensor (really necessary?)
-- Server
-- Networking infra
-- Fan
-- IoT device (really necessary?)
-- other
-- Alarm
 - Media Player
 - Actuator
 

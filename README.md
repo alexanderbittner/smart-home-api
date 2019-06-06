@@ -8,16 +8,11 @@ This project is entirely developed in my free time. It might take a while to com
 
 Instead of starting this project by blindly implementing spontaneous ideas, some planning in advance should hopefully help avoiding headaches later!
 
-### [Planned] Phase 1: Initial testing of OAuth 2.0
-
-The first phase of the project will consist of an implementation of OAuth 2.0 that will be used for the API.
-This way, requests will be secured from the start and possible security flaws can be detected early on.
-
-### [Planned] Phase 2: Implement dummy devices + controllers
+### [In progress] Phase 1: Implement dummy devices + controllers
 
 These dummy devices should have working API endpoints for testing purposes, but no physical devices yet. This makes development faster and more secure: If there are issues, no actual devices are affected.
 
-### [Planned] Phase 3: Set up and implement the central control server
+### [Planned] Phase 2: Set up and implement the central control server
 
 This phase consists of several steps:
 
@@ -25,6 +20,10 @@ This phase consists of several steps:
 2. Set up logging and a Splunk forwarder
 3. Implement the device registration system
 4. Set up an online endpoint for the API
+
+### [Planned] Phase 3: Initial testing of OAuth 2.0
+
+Using proper authentication for the smart home API is one of the most important aspects of a secure setup.
 
 ### [Planned] Phase 4: Implement smart home devices + controllers
 
