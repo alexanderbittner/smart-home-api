@@ -6,29 +6,33 @@ The Server is them main controller that clients can reach and interact with. It 
 ## Device types
 
 There are several types of sensor/actuator devices, a preliminary list is included below.
+Every device type has specific state options, e.g. brightness or fan speed
 
 ### Actuators
 
-- switch
-- button
-- fan
-- lamp-generic
-- lamp-hue-color
-- lamp-hue-white
-- alarm
+- switch, `active:boolean`
+- button, `active:boolean`, `activation-time:int` (how long the button stays on, stored on device)
+- fan `power:int` (PWM power), `speed:int` (RPM representing speed)
+- lamp-generic `active:boolean`
+- lamp-hue-color `brightness:int`, `red:int`, `blue:int`, `blue:int`, `white:int` (the RGBW values of the bulb)
+- lamp-hue-white `brightness:int`, `temperature:int` (light temperature according to hue API docs)
+- alarm `active:boolean`, `time:timestamp`
+- sound-player `active:boolean`, `sound:sound-name`, `volume:int` (plays the file named "sound-name" in a specified directory. Whether this list should be static or retrievable is TBD)
 
 ### Sensors
 
-- thermometer
-- hygrometer
-- movement-sensor
-- rfid-reader
-- brightness-sensor
-- generic-boolean
-- generic-8bit
-- generic-16bit
+- thermometer `temperature:double` (double-precision temperature in celsius)
+- hygrometer `humidity:int` (humidity in 0-255)
+- movement-sensor `movement:boolean` (this only makes sense as an event subscription)
+- rfid-reader `tag-present:boolean`, `tag-id:string`, `tag-content:string` (Intended for event subscription)
+- brightness-sensor `brightness:int` (unit to be determined)
+- generic-boolean `value:boolean`
+- generic-8bit `value:8bit-int`
+- generic-16bit `value:16bit-int`
 
 ## Control server endpoints
+
+These are the endpoints accessible to users in order to interact with the devices through the central control server. For the internal communication between the control server and the individual devices, please see "Sensor / actuator endpoints" below.
 
 ### List devices
 
@@ -158,3 +162,20 @@ The response depends on whether the request was successful:
 - User does not have enough privileges: `403 FORBIDDEN`
 
 ## Sensor / actuator endpoints
+
+The control server uses a comparable pattern to talk to the devices themselves. There are three different possible requests the control server might send: `GET` will retrieve the current state, `POST` updates the state (only possible on actuators) and gets the new state back, `POST /subscribe/` with (optional) `frequency:int` (in seconds) as parameter subscribes the control server to events. These events will send the current state to the control server either when something triggers (RFID tag presented, Movement detected) or every X seconds, as defined in the parameter.
+
+This is being done in order to move as much of the logical processing to the main control server as possible. This way, endpoint devices are easily swappable and could go offfline without causing issues with programmed values. An exception to this is the alarm module, as this manages its own time and should be available even if power goes offline (using batteries).
+
+**Definition**
+`DELETE /device/<identifier>`
+
+**Description**
+Deletes the specified device
+
+**Response**
+The response depends on whether the request was successful:
+
+- Not found: `404 NOT FOUND`
+- Success: `204 NO CONTENT`
+- User does not have enough privileges: `403 FORBIDDEN`
