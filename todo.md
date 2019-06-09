@@ -8,6 +8,7 @@
   - what should the /subscribe POST request contain?
   - how should offline devices be treated?
   - If sensor readings take a few seconds (e.g. as with DHT22), should a local copy be sent? maybe only if recent? This should be documented, including a possible time limit that endpoint controllers must adhere to.
+  - what happens if one endpoint controls more than one resource of the same type?
 - [ ] add a music player, with state details: song name, song artist, song album, song length, elapsed length, playing/paused and the options to skip
   - should skip be done by a call to a different URL? should it be a part of the state json object and then changed with a POST request? This would be redundant data info from player to controller as the returned `skip:boolean` would always be false.
 - [ ] Look into multi-room music playback integration (similar to SONOS, the amazon echo dot API has useful things: [Link](https://developer.amazon.com/docs/mrm/multi-room-music-sdk-overview.html), maybe this could be integrated.
