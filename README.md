@@ -4,15 +4,15 @@ This project is entirely developed in my free time. It might take a while to com
 
 ## Roadmap
 
-### [In progress] Phase 0: Determine initial architecture, set up infrastructure, plan implementation
+### [DONE] Phase 0: Determine initial architecture, set up infrastructure, plan implementation
 
 Instead of starting this project by blindly implementing spontaneous ideas, some planning in advance should hopefully help avoiding headaches later!
 
-### [In progress] Phase 1: Implement dummy devices + controllers
+### [DONE] Phase 1: Implement dummy devices + controllers
 
 These dummy devices should have working API endpoints for testing purposes, but no physical devices yet. This makes development faster and more secure: If there are issues, no actual devices are affected.
 
-### [Planned] Phase 2: Set up and implement the central control server
+### [In Progress] Phase 2: Set up and implement the central control server
 
 This phase consists of several steps:
 

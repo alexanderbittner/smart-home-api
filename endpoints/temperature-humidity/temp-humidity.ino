@@ -36,7 +36,7 @@ void setup() {
   //initialize web server paths, then start the server
   server.on("/", handle_root);
   server.on("/state", handle_state);
-  server.onNotFound(handle_NotFound);
+  server.onNotFound(handle_notFound);
 
   server.begin();
   Serial.println("HTTP server started");
@@ -74,6 +74,6 @@ void handle_state() {
 }
 
 //return a 404 page
-void handle_NotFound(){
+void handle_notFound(){
   server.send(404, "text/plain", "Not found");
 }
