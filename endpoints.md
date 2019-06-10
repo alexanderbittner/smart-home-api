@@ -11,24 +11,24 @@ Every device type has specific state options, e.g. brightness or fan speed
 ### Actuators
 
 - switch, `active:boolean`
-- button, `active:boolean`, `activation-time:int` (how long the button stays on, stored on device)
+- button, `active:boolean`, `activation-time:int` (how long the button stays on, in milliseconds)
 - fan `power:int` (PWM power), `speed:int` (RPM representing speed)
 - lamp-generic `active:boolean`
 - lamp-hue-color `brightness:int`, `red:int`, `blue:int`, `blue:int`, `white:int` (the RGBW values of the bulb)
 - lamp-hue-white `brightness:int`, `temperature:int` (light temperature according to hue API docs)
-- alarm `active:boolean`, `time:timestamp`
-- sound-player `active:boolean`, `sound:sound-name`, `volume:int` (plays the file named "sound-name" in a specified directory. Whether this list should be static or retrievable is TBD)
+- alarm `active:boolean`, `time:unix-timestamp`, `timezone:string` `sound:string` The activation time is a unix timestamp in UTC time zone, specify local time zone as e.g. Europe/Amsterdam. The sound string specifies a file in the folder of alarm sounds, e.g. digital-beep.wav to play digital-beep.wav when the alarm triggers.
+- sound-player `active:boolean`, `sound:string`, `volume:int` (plays the file named "sound-name" in a specified directory. Whether this list should be static or retrievable is TBD)
 
 ### Sensors
 
-- thermometer `temperature:double` (double-precision temperature in celsius)
-- hygrometer `humidity:int` (humidity in 0-255)
+- thermometer `temperature:float` (temperature in celsius)
+- hygrometer `humidity:float` (humidity in percent)
 - movement-sensor `movement:boolean` (this only makes sense as an event subscription)
-- rfid-reader `tag-present:boolean`, `tag-id:string`, `tag-content:string` (Intended for event subscription)
+- rfid-reader `tag-present:boolean`, `tag-id:string`, `tag-content:string` (Intended for event subscription), `tag-id` and `tag-content` are empty strings with length 0 when no tag is present
 - brightness-sensor `brightness:int` (unit to be determined)
 - generic-boolean `value:boolean`
-- generic-8bit `value:8bit-int`
-- generic-16bit `value:16bit-int`
+- generic-int `value:int`
+- generic-float `value:float`
 
 ## Control server endpoints
 
@@ -51,57 +51,105 @@ The response depends on whether the request was successful:
     [
         {
             "identifier": "lamp-01",
-            "friendly-name": "Super Cool Lamp Name",
-            "device-type": "lamp-hue"
+            "name": "Super Cool Lamp Name",
+            "type": "lamp-hue-color",
+            "controller-id": "hue-controller",
+            "state": {
+                "on": {
+                    "type": "boolean",
+                    "value": false
+                },
+                "brightness": {
+                    "type": "int",
+                    "min": 1,
+                    "max": 254,
+                    "value": 100
+                },
+                "xy": [
+                    {
+                        "type": float,
+                        "min": 0.0,
+                        "max": 1.0,
+                        "value": 0.3521
+                    },
+                    {
+                        "type": float,
+                        "min": 0.0,
+                        "max": 1.0,
+                        "value": 0.4153
+                    }
+                ]
+            }
         },
         {
             "identifier": "lamp-02",
-            "friendly-name": "Super Cool Lamp Name 2",
-            "device-type": "lamp-generic"
+            "name": "Super Cool Lamp Name 2",
+            "type": "lamp-generic",
+            "controller-id": "433-mhz-controller",
+            "state": {
+                "on": {
+                    "type": "boolean",
+                    "value": false
+                }
+            }
         },
         {
             "identifier": "pc-01-power",
-            "friendly-name": "PC-01 power button",
-            "device-type": "button"
+            "name": "PC-01 power button",
+            "type": "button",
+            "controller-id": "pc-01-controller",
+            "state": {
+                "active": {
+                    "type": "boolean",
+                    "value": false
+                },
+                "activation-time": {
+                    "type": "int",
+                    "min": 1,
+                    "max": 10000,
+                    "value": 500
+                }
+            }
         },
         {
             "identifier": "pc-01-temp",
-            "friendly-name": "PC-01 temperature gauge",
-            "device-type": "thermometer"
+            "name": "PC-01 CPU temperature",
+            "type": "thermometer",
+            "controller-id": "pc-01-controller",
+            "state": {
+                "temperature": {
+                    "type": "float",
+                    "min": -40.0,
+                    "max": 125.0,
+                    "value": 25.34
+                }
+            }
         },
         {
             "identifier": "rfid-01",
-            "friendly-name": "RFID Reader front door",
-            "device-type": "rfid-reader"
+            "name": "RFID Reader front door",
+            "type": "rfid-reader",
+            "controller-id": "front-door-controller",
+            "state": {
+                "tag-present": {
+                    "type": "float",
+                    "min": -40.0,
+                    "max": 125.0,
+                    "value": 25.34
+                },
+                "tag-id": {
+                    "type": "string",
+                    "length": 8,
+                    "value": "12345678"
+                },
+                "tag-content": {
+                    "type": "string",
+                    "length": 32,
+                    "value": "12345678123456781234567812345678"
+                }
+            }
         }
     ]
-    ```
-
-- User does not have enough privileges: `403 FORBIDDEN`
-
-### Create device
-
-**Definition**
-`POST /devices`
-
-**Description**
-Creates a new device entry with the parameters as specified below:
-
-- `"identifier":string` unique identifier such as "lamp-01".
-- `"name":string` human-readable name, e.g. "Super Cool Lamp Name".
-- `"device-type":string` type of the device, see list above for different device types
-
-**Response**
-The response depends on whether the request was successful:
-
-- Success: `201 CREATED`, `200 OK` if a device existed and was overwritten
-
-    ```json
-    {
-        "identifier": "lamp-01",
-        "name": "Super Cool Lamp Name",
-        "device-type": "lamp-hue"
-    }
     ```
 
 - User does not have enough privileges: `403 FORBIDDEN`
@@ -122,13 +170,110 @@ The response depends on whether the request was successful:
 
     ```json
     {
-        "identifier": "lamp-01",
-        "name": "Super Cool Lamp Name",
-        "device-type": "lamp-hue"
+        "identifier": "rfid-01",
+        "name": "RFID Reader front door",
+        "type": "rfid-reader",
+        "controller-id": "front-door-controller",
+        "state": {
+            "tag-present": {
+                "type": "float",
+                "min": -40.0,
+                "max": 125.0,
+                "value": 25.34
+            },
+            "tag-id": {
+                "type": "string",
+                "length": 8,
+                "value": "12345678"
+            },
+            "tag-content": {
+                "type": "string",
+                "length": 32,
+                "value": "12345678123456781234567812345678"
+            }
+        }
     }
     ```
 
 - User does not have enough privileges: `403 FORBIDDEN`
+
+### Create device
+
+**Definition**
+`PUT /devices`
+
+**Description**
+Creates a new device entry with the parameters as specified below. Once registered, the central controller tries to connect to the specified device controller and tries to retrieve the state of the device (that follows the type definition).
+
+- `"identifier":string` unique identifier such as "lamp-01".
+- `"name":string` human-readable name, e.g. "Super Cool Lamp Name".
+- `"type":string` type of the device, see list above for different device types
+- `"controller-id":string` id of the controller that will handle requests going to said device
+
+**Response**
+The response depends on whether the request was successful:
+
+- Success: `201 CREATED`
+
+    ```json
+    {
+        "identifier": "pc-01-temp",
+        "name": "PC-01 CPU temperature",
+        "type": "thermometer",
+        "controller-id": "pc-01-controller",
+        "state": {
+            "temperature": {
+                "type": "float",
+                "min": -40.0,
+                "max": 125.0,
+                "value": 25.34
+            }
+        }
+    }
+    ```
+
+- Could not connect to device controller and get state: `404 NOT FOUND`
+- User does not have enough privileges: `403 FORBIDDEN`
+- Not logged in: `401 UNAUTHORIZED`
+- Resource already exists: `409 CONFLICT`
+
+### Change device
+
+**Definition**
+`POST /devices/<identifier>`
+
+**Description**
+Changes one or more devices using a POST request, with the parameters as specified below. This can be used to either change device names (though not the identifier or type) or their state (e.g. for activating on a `switch` device). Once the request has been completed successfully, it will be met with the proper response containing the updated content. If an illegal action happened (e.g. trying to change the temperature reading of a temperature sensor), an error will be returned.
+
+- `"name":string` human-readable name, e.g. "Super Cool Lamp Name".
+- `"state":json` the changed json object.
+
+**Response**
+The response depends on whether the request was successful:
+
+- Success: `200 OK` if the content could be changed successfully
+
+    ```json
+    {
+        "identifier": "pc-01-temp",
+        "name": "PC-01 CPU temperature",
+        "type": "thermometer",
+        "controller-id": "pc-01-controller",
+        "state": {
+            "temperature": {
+                "type": "float",
+                "min": -40.0,
+                "max": 125.0,
+                "value": 25.34
+            }
+        }
+    }
+    ```
+
+- Illegal request: `409 CONFLICT`
+- Could not connect to device controller and get state: `404 NOT FOUND`
+- User does not have enough privileges: `403 FORBIDDEN`
+- Not logged in: `401 UNAUTHORIZED`
 
 ### Remove device
 
@@ -144,38 +289,10 @@ The response depends on whether the request was successful:
 - Not found: `404 NOT FOUND`
 - Success: `204 NO CONTENT`
 - User does not have enough privileges: `403 FORBIDDEN`
-
-### Check whether device is a coffee machine
-
-**Definition**
-`GET /device/<identifier>/coffee`
-
-**Description**
-Life is boring without having some fun
-
-**Response**
-The response depends on whether the request was successful:
-
-- Not found: `404 NOT FOUND`
-- Success: `204 NO CONTENT` if device is a coffee machine
-- Success: `418 I'M A TEAPOT` if device is a teapot
-- User does not have enough privileges: `403 FORBIDDEN`
+- Not logged in: `401 UNAUTHORIZED`
 
 ## Sensor / actuator endpoints
 
-The control server uses a comparable pattern to talk to the devices themselves. There are three different possible requests the control server might send: `GET` will retrieve the current state, `POST` updates the state (only possible on actuators) and gets the new state back, `POST /subscribe/` with (optional) `frequency:int` (in seconds) as parameter subscribes the control server to events. These events will send the current state to the control server either when something triggers (RFID tag presented, Movement detected) or every X seconds, as defined in the parameter.
+The control uses a comparable standard to talk to the device controllers. There are three differend possible request types the control server might sent: `GET /` will retrieve the current state array, `GET /<device-id>` will return only the current state of the specivied device, `POST` updates the state (only possible on actuators). `POST /<device-id>/subscribe` including `"frequency":int` and an (array of) empty state tag(s) (e.g. `"temperature"`) will subscribe the central controller to the specified value. Here, the frequency will determine how long the interview between sent events will be (in milliseconds). If the specified interval is 0, only updated events will be sent. These events will send the current state to the control server either when something triggers (RFID tag presented, Movement detected).
 
 This is being done in order to move as much of the logical processing to the main control server as possible. This way, endpoint devices are easily swappable and could go offfline without causing issues with programmed values. An exception to this is the alarm module, as this manages its own time and should be available even if power goes offline (using batteries).
-
-**Definition**
-`DELETE /device/<identifier>`
-
-**Description**
-Deletes the specified device
-
-**Response**
-The response depends on whether the request was successful:
-
-- Not found: `404 NOT FOUND`
-- Success: `204 NO CONTENT`
-- User does not have enough privileges: `403 FORBIDDEN`
