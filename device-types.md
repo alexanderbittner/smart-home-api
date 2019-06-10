@@ -104,7 +104,7 @@ This documentation includes the different device types and an example json objec
     to be implemented
     ```
 
-- alarm `"active":boolean`, `"time":string`, `"timezone":string` `sound:string` The activation time is a 64-bit unix timestamp in UTC time zone, specify local time zone as e.g. Europe/Amsterdam. The sound string specifies a file in the folder of alarm sounds, e.g. digital-beep.wav to play digital-beep.wav when the alarm triggers.
+- alarm `"scheduled":boolean`, `"active":boolean`, `"time":string`, `"timezone":string` `sound:string` The activation time is a 64-bit unix timestamp in UTC time zone, specify local time zone as e.g. Europe/Amsterdam. The sound string specifies a file in the folder of alarm sounds, e.g. digital-beep.wav to play digital-beep.wav when the alarm triggers.
 1560186054
 2147483647
 
@@ -115,6 +115,10 @@ This documentation includes the different device types and an example json objec
         "type": "alarm",
         "controller-id": "alarm-controller",
         "state": {
+            "scheduled": {
+                "type": "boolean",
+                "value": true
+            },
             "active": {
                 "type": "boolean",
                 "value": false

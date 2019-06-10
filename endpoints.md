@@ -16,7 +16,7 @@ Every device type has specific state options, e.g. brightness or fan speed
 - lamp-generic `active:boolean`
 - lamp-hue-color `brightness:int`, `red:int`, `blue:int`, `blue:int`, `white:int` (the RGBW values of the bulb)
 - lamp-hue-white `brightness:int`, `temperature:int` (light temperature according to hue API docs)
-- alarm `active:boolean`, `time:unix-timestamp`, `timezone:string` `sound:string` The activation time is a unix timestamp in UTC time zone, specify local time zone as e.g. Europe/Amsterdam. The sound string specifies a file in the folder of alarm sounds, e.g. digital-beep.wav to play digital-beep.wav when the alarm triggers.
+- alarm `scheduled:boolean``active:boolean`, `time:unix-timestamp`, `timezone:string` `sound:string` The activation time is a unix timestamp in UTC time zone, specify local time zone as e.g. Europe/Amsterdam. The sound string specifies a file in the folder of alarm sounds, e.g. digital-beep.wav to play digital-beep.wav when the alarm triggers. When the alarm is playing, the "active" value is set to be true. To turn off the alarm, set the "active" value to 'false'.
 - sound-player `active:boolean`, `sound:string`, `volume:int` (plays the file named "sound-name" in a specified directory. Whether this list should be static or retrievable is TBD)
 
 ### Sensors
