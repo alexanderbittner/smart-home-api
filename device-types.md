@@ -82,13 +82,13 @@ This documentation includes the different device types and an example json objec
             },
             "xy": [
                 {
-                    "type": float,
+                    "type": "float",
                     "min": 0.0,
                     "max": 1.0,
                     "value": 0.3521
                 },
                 {
-                    "type": float,
+                    "type": "float",
                     "min": 0.0,
                     "max": 1.0,
                     "value": 0.4153
