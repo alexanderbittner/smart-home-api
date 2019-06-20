@@ -1,10 +1,29 @@
 # Todo
 
-- [x] Finalise the state architecture
+Collection of things that are on the to-do list, not ordered by priority. Done below.
+
+## TODO
+
 - [ ] Document the state architecture
-- [ ] Add rooms
-  - Keep devices "stupid", so do not include e.g. whether a light turns off with the room or not. This logic should be added in the controller later. Example: When there is no one left in a room and no movement, turn off all devices. Except when temp > 30C, then keep fan running.
-- [ ] Add zones/groups
+- [ ] Add rooms / zones / groups
+- [ ] add a music player, with state details:
+  - [ ] song name
+  - [ ] song artist
+  - [ ] song album
+  - [ ] song length
+  - [ ] elapsed length
+  - [ ] playing/pause
+  - [ ] the options to skip
+  - this should utilize separate endpoints:
+    - [ ] `POST /skip` (with 0 seconds in json)
+    - [ ] `POST /skip` (with amount of seconds in json body )
+- [ ] Look into multi-room music playback integration (similar to SONOS, the amazon echo dot API has useful things: [Link](https://developer.amazon.com/docs/mrm/multi-room-music-sdk-overview.html), maybe this could be integrated.
+- [ ] add documentation of controller - endpoint communication
+- [ ] Improve pairing, maybe overcome wifi credential hardcoding.
+
+## DONE
+
+- [x] Finalise the state architecture
 - [x] finalize design for control server / endpoint registration, subscription and communication. Some thoughts:
   - what should the /subscribe POST request contain?
     -> state with changed variables
@@ -14,8 +33,4 @@
     -> NO
   - what happens if one endpoint controls more than one resource of the same type? -> every endpoint has a UID, UID is sent with the state.
   - should endpoint devices hold their own name / id? This might be the best option. -> see above
-- [ ] add a music player, with state details: song name, song artist, song album, song length, elapsed length, playing/paused and the options to skip
-  - should skip be done by a call to a different URL? should it be a part of the state json object and then changed with a POST request? This would be redundant data info from player to controller as the returned `skip:boolean` would always be false.
-- [ ] Look into multi-room music playback integration (similar to SONOS, the amazon echo dot API has useful things: [Link](https://developer.amazon.com/docs/mrm/multi-room-music-sdk-overview.html), maybe this could be integrated.
 - [x] Look into more complex devices, such as cameras. A URL to the video stream could be included in order to enhance compatibility, or should the URL /stream be the norm? Should all non-text data content (Audio / Video stream, image) be hosted on a separate URL? -> yes, separate URL
-- [ ] add documentation of controller - endpoint communication

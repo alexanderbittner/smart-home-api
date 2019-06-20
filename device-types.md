@@ -1,6 +1,11 @@
 # Device type documentation
 
-This documentation includes the different device types and an example json object containing all relevant device information. This can be used as a reference for implementing the device controllers.
+This documentation includes the different device types and an example json object containing all relevant device information, as communicated to user devices by the hub. This can be used as a reference for implementing the device controllers.
+
+## Device types
+
+There are several types of sensor/actuator devices, a preliminary list is included below.
+Every device type has specific state options, e.g. brightness or fan speed.
 
 ## Actuators
 

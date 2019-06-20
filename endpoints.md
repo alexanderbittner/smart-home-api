@@ -3,33 +3,6 @@
 The API will consist of three different actor types: Client, Server and Sensor/Actuator.
 The Server is them main controller that clients can reach and interact with. It in turn sends requests to the sensors/actuators.
 
-## Device types
-
-There are several types of sensor/actuator devices, a preliminary list is included below.
-Every device type has specific state options, e.g. brightness or fan speed
-
-### Actuators
-
-- switch, `active:boolean`
-- button, `active:boolean`, `activation-time:int` (how long the button stays on, in milliseconds)
-- fan `power:int` (PWM power), `speed:int` (RPM representing speed)
-- lamp-generic `active:boolean`
-- lamp-hue-color `brightness:int`, `red:int`, `blue:int`, `blue:int`, `white:int` (the RGBW values of the bulb)
-- lamp-hue-white `brightness:int`, `temperature:int` (light temperature according to hue API docs)
-- alarm `scheduled:boolean``active:boolean`, `time:unix-timestamp`, `timezone:string` `sound:string` The activation time is a unix timestamp in UTC time zone, specify local time zone as e.g. Europe/Amsterdam. The sound string specifies a file in the folder of alarm sounds, e.g. digital-beep.wav to play digital-beep.wav when the alarm triggers. When the alarm is playing, the "active" value is set to be true. To turn off the alarm, set the "active" value to 'false'.
-- sound-player `active:boolean`, `sound:string`, `volume:int` (plays the file named "sound-name" in a specified directory. Whether this list should be static or retrievable is TBD)
-
-### Sensors
-
-- thermometer `temperature:float` (temperature in celsius)
-- hygrometer `humidity:float` (humidity in percent)
-- movement-sensor `movement:boolean` (this only makes sense as an event subscription)
-- rfid-reader `tag-present:boolean`, `tag-id:string`, `tag-content:string` (Intended for event subscription), `tag-id` and `tag-content` are empty strings with length 0 when no tag is present
-- brightness-sensor `brightness:int` (unit to be determined)
-- generic-boolean `value:boolean`
-- generic-int `value:int`
-- generic-float `value:float`
-
 ## Control server endpoints
 
 These are the endpoints accessible to users in order to interact with the devices through the central control server. For the internal communication between the control server and the individual devices, please see "Sensor / actuator endpoints" below.
@@ -292,6 +265,11 @@ The response depends on whether the request was successful:
 - Not logged in: `401 UNAUTHORIZED`
 
 ## Sensor / actuator endpoints
+
+This functionality generally follows a similar standard. To set up a newly connected device...
+
+- client sends discover to hub
+- press button on device to pair
 
 The control uses a comparable standard to talk to the device controllers. There are three differend possible request types the control server might sent: `GET /` will retrieve the current state array, `GET /<device-id>` will return only the current state of the specivied device, `POST` updates the state (only possible on actuators). `POST /<device-id>/subscribe` including `"frequency":int` and an (array of) empty state tag(s) (e.g. `"temperature"`) will subscribe the central controller to the specified value. Here, the frequency will determine how long the interview between sent events will be (in milliseconds). If the specified interval is 0, only updated events will be sent. These events will send the current state to the control server either when something triggers (RFID tag presented, Movement detected).
 
