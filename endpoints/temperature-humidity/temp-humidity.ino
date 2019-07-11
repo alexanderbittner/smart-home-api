@@ -56,7 +56,7 @@ void handle_root() {
 void handle_state() {
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
-
+  Serial.println("new reading: "+String(temperature)+"C, "+String(humidity)+"%");
   String message = "{";
   
   message += "\n  \"temperature\":{\n";
